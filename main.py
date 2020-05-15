@@ -5,14 +5,40 @@ class Graph:
 
     def __init__(self, components=None, name=''):
         """
-        Create graph object from set of vertex names
+        Create graph object from tuple of vertex names
         """
         self.name = name
         self.vertices = []
         self.edges = []
-        for component_name in components:
-            vertex = Vertex(name=component_name, graph_name=self.name)
-            self.vertices.append(vertex)
+        if components is not None:
+            for component_name in components:
+                vertex = Vertex(name=component_name, graph_name=self.name)
+                self.vertices.append(vertex)
+
+    def add_from_neighbors_list(self, neighbors_list):
+        """
+        Add vertices and edges to graph object from list of neighbors
+
+        Parameters:
+            neighbors_list - dictionary - key = Vertex name: value = list of neighboring Vertex names
+        """
+
+        if neighbors_list is None:
+            return None
+        else:
+            for vertex_name in neighbors_list.keys():
+                for search_vertex in self.vertices:
+                    if search_vertex.name == vertex_name:
+                        break
+                else:
+                    self.vertices.append(Vertex(name=vertex_name, graph_name=self.name))
+                for neighbor_name in neighbors_list[vertex_name]:
+                    for search_vertex in self.vertices:
+                        if search_vertex.name == vertex_name:
+                            break
+                    else:
+                        self.vertices.append(Vertex(name=vertex_name, graph_name=self.name))
+                    self.add_edge((vertex_name, neighbor_name))
 
     def add_edge(self, vertex_names, oriented=False, weight=None, name=''):
         """
@@ -20,7 +46,7 @@ class Graph:
 
          Paramteres:
          vertices - tuple of two Vertex objects
-         oriented = edge is oriented in order of mentioned vertices
+         oriented - edge is oriented in order of mentioned vertices
         """
 
         if vertex_names[0] is None or vertex_names[1] is None:
@@ -49,15 +75,21 @@ class Vertex:
         self.neighbors = []
 
     def __str__(self):
-        return f"Vertex {self.name} of graph {self.graph_name}\nNeighbors: {str(self.neighbors)}"
+        neighbors_text = [str(neighbor.name) for neighbor in self.neighbors]
+        return f"Name: {self.name}, graph: {self.graph_name}\nNeighbors: {str(neighbors_text)}"
+
 
 """
-test_vertices = {"TestA", "Q", "Vertex120"}
-test_graph = Graph(test_vertices, "Testing graph")
-for _vertex in test_graph.vertices:
-    print(str(_vertex))
-print()
-test_graph.add_edge(("TestA", "Q"), oriented=True, weight=2, name="Edge_1")
+test_graph = Graph(components=None, name="Testing graph")
+
+_test_dict = {
+    "A": ["B"],
+    "B": ["D", "C"],
+    "C": ["A"],
+    "D": ["A", "C"]
+}
+test_graph.add_from_neighbors_list(_test_dict)
+
 for _vertex in test_graph.vertices:
     print(str(_vertex))
 """
