@@ -15,6 +15,19 @@ class Graph:
                 vertex = Vertex(name=component_name, graph_name=self.name)
                 self.vertices.append(vertex)
 
+    def check_or_add_vertex(self, vertex_name):
+        """
+        Returns Vertex object from searching in graph by vertex name.
+
+        If the graph does not contain the vertex, it is created
+        """
+        for _vertex_search in self.vertices:
+            if _vertex_search.name == vertex_name:
+                return _vertex_search
+        vertex = Vertex(vertex_name, graph_name=self.name)
+        self.vertices.append(vertex)
+        return vertex
+
     def add_from_neighbors_list(self, neighbors_list):
         """
         Add vertices and edges to graph object from list of neighbors
@@ -27,17 +40,7 @@ class Graph:
             return None
         else:
             for vertex_name in neighbors_list.keys():
-                for search_vertex in self.vertices:
-                    if search_vertex.name == vertex_name:
-                        break
-                else:
-                    self.vertices.append(Vertex(name=vertex_name, graph_name=self.name))
                 for neighbor_name in neighbors_list[vertex_name]:
-                    for search_vertex in self.vertices:
-                        if search_vertex.name == vertex_name:
-                            break
-                    else:
-                        self.vertices.append(Vertex(name=vertex_name, graph_name=self.name))
                     self.add_edge((vertex_name, neighbor_name))
 
     def add_edge(self, vertex_names, oriented=False, weight=None, name=''):
@@ -49,23 +52,14 @@ class Graph:
          oriented - edge is oriented in order of mentioned vertices
         """
 
-        if vertex_names[0] is None or vertex_names[1] is None:
-            return None
-        else:
-            vertex1, vertex2 = None, None
-            for vertex_search in self.vertices:
-                if vertex_names[0] == vertex_search.name:
-                    vertex1 = vertex_search
-                if vertex_names[1] == vertex_search.name:
-                    vertex2 = vertex_search
-            if vertex1 is None or vertex2 is None:
-                return None
-            else:
-                self.edges.append((vertex1, vertex2, oriented, weight, name))
-                if oriented is False:
-                    vertex2.neighbors.append(vertex1)
+        vertex1 = self.check_or_add_vertex(vertex_names[0])
+        vertex2 = self.check_or_add_vertex(vertex_names[1])
 
-                vertex1.neighbors.append(vertex2)
+        self.edges.append((vertex1, vertex2, oriented, weight, name))
+        if oriented is False:
+            vertex2.neighbors.append(vertex1)
+
+        vertex1.neighbors.append(vertex2)
 
 
 class Vertex:
@@ -79,17 +73,16 @@ class Vertex:
         return f"Name: {self.name}, graph: {self.graph_name}\nNeighbors: {str(neighbors_text)}"
 
 
-"""
 test_graph = Graph(components=None, name="Testing graph")
 
 _test_dict = {
     "A": ["B"],
-    "B": ["D", "C"],
-    "C": ["A"],
+    "B": ["D"],
+    "C": [],
     "D": ["A", "C"]
 }
 test_graph.add_from_neighbors_list(_test_dict)
 
 for _vertex in test_graph.vertices:
     print(str(_vertex))
-"""
+
