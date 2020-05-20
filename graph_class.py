@@ -106,22 +106,23 @@ class Vertex:
         return f"Name: {self.name}, graph: {self.graph_name}\nNeighbors: {str(neighbors_text)}"
 
 
-graph1 = Graph("graph 1")
-graph2 = Graph("graph 2")
+if __name__ == "__main__":
+    graph1 = Graph("graph 1")
+    graph2 = Graph("graph 2")
 
-_test_dict = {
-    "A": ["B"],
-    "B": ["D"],
-    "C": [],
-    "D": ["A", "C"]
-}
-graph1.add_from_neighbors_list(_test_dict)
+    _test_dict = {
+        "A": ["B"],
+        "B": ["D"],
+        "C": [],
+        "D": ["A", "C"]
+    }
+    graph1.add_from_neighbors_list(_test_dict)
 
-graph2.return_vertex("Q")
-graph2.return_vertex("X")
-graph2.add_edge(("Q", "X"), oriented=True, weight=12)
+    graph2.return_vertex("Q")
+    graph2.return_vertex("X")
+    graph2.add_edge(("Q", "X"), oriented=True, weight=12)
 
-result_graph = graph2 + graph1
+    result_graph = graph2 + graph1
 
-for _vertex in result_graph.vertices:
-    print(str(_vertex))
+    for _vertex in result_graph.vertices:
+        print(str(_vertex))
