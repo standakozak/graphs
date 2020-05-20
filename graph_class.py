@@ -67,6 +67,12 @@ class Graph:
 
         vertex1.neighbors.append(vertex2)
 
+    def set_focus(self, component):
+        _set_value = not component.focused
+        for vertex in self.vertices:
+            vertex.focused = False
+        component.focused = _set_value
+
     def __add__(self, other, name=None):
         """
         Returns new Graph object after it adds vertices and edges from second Graph object to the first
@@ -96,10 +102,12 @@ class Graph:
 
 
 class Vertex:
-    def __init__(self, name, graph_name=None):
+    def __init__(self, name, graph_name=None, x=None, y=None):
         self.name = name
         self.graph_name = graph_name
         self.neighbors = []
+        self.x, self.y = x, y
+        self.focused = False
 
     def __str__(self):
         neighbors_text = [str(neighbor.name) for neighbor in self.neighbors]
@@ -124,5 +132,5 @@ if __name__ == "__main__":
 
     result_graph = graph2 + graph1
 
-    for _vertex in result_graph.vertices:
-        print(str(_vertex))
+    for vertex in result_graph.vertices:
+        print(str(vertex))
