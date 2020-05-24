@@ -1,2 +1,4 @@
-scale = 1
-vertex_size = 30
+SCALE = 1
+VERTEX_SIZE = 30
+WIDTH = 400
+HEIGHT = 300
