@@ -1,4 +1,3 @@
-SCALE = 1
-VERTEX_SIZE = 30
-WIDTH = 400
-HEIGHT = 300
+VERTEX_SIZE = 30  # Width and height of ovals representating vertices
+MAX_CANVAS_WIDTH = 1024  # For calculating position of randomly placed vertices
+MAX_CANVAS_HEIGHT = 493
