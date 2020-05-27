@@ -1,5 +1,6 @@
-##**Tkinter visualization of graphs**
-This is my project of visualization of [graphs](https://en.wikipedia.org/wiki/Graph_(discrete_mathematics). I plan to add visualization of graph algorithms in the future.
+## **Tkinter visualization of graphs**
+This is my project of visualization of 
+[graphs](https://en.wikipedia.org/wiki/Graph_\(discrete_mathematics\)). I plan to add visualization of graph algorithms in the future.
 
 At the moment, it can visualize graph created as Graph object.\
 You can also modify graph by adding vertices or edges on canvas.
