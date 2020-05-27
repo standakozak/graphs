@@ -12,6 +12,6 @@ How to use the program:
         <ul>Add edge by dragging between vertices with left button </ul>
         <ul>Move vertices with right mouse button</ul>
     </ul>
-    ![screenshot](C:\Users\kozak\PycharmProjects\graphs\screen.png)\
+    ![screenshot](screen.png)\
 (You can find bare Graph class in branch graph_class)
   
