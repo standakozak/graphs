@@ -4,6 +4,8 @@ from sys import exit
 
 from graph_class import Graph
 from draw_functions import *
+from ui_functions import *
+from algorithms import bfs
 
 
 def click(event):
@@ -20,7 +22,23 @@ def click(event):
         if focused_object_index is None:
             focused_object_index, new_vertex = add_vertex_from_click(event.x, event.y, event.widget, graph)
             element_indexes[focused_object_index] = new_vertex
+            new_vertex.canvas_index = focused_object_index
         element_indexes = update_canvas(graph_canvas, element_indexes, graph)
+
+
+def button_click(value_variable, actions):
+    value = value_variable.get()
+    algorithm_func = None
+
+    for action in actions:
+        if value == action[0]:
+            algorithm_func = action[1]
+            break
+    if algorithm_func is not None:
+        global graph, focused_object_index, element_indexes, graph_canvas
+        if focused_object_index:
+            start_object = element_indexes[focused_object_index]
+            draw_algorithm(algorithm_func, graph_canvas, graph, start_object)
 
 
 def mouse_motion(event, mouse_num=1):
@@ -52,9 +70,10 @@ def mouse_motion(event, mouse_num=1):
                 end_object_index = check_pos(graph_canvas, element_indexes, tk.CURRENT)
                 if end_object_index is not None and end_object_index != dragged_object_index:
                     # Creating new edge
-                    new_edge_index, edge = add_line((element_indexes[dragged_object_index],
-                                                     element_indexes[end_object_index]), event.widget, graph)
+                    new_edge_index, edge = add_edge((element_indexes[dragged_object_index],
+                                                     element_indexes[end_object_index]),event.widget,graph)
                     element_indexes[new_edge_index] = edge
+                    edge.canvas_index = new_edge_index
                     focused_object_index = new_edge_index
                     element_indexes = update_canvas(graph_canvas, element_indexes, graph)
             dragged_object_index = None
@@ -87,6 +106,18 @@ def setup():
 
     frame.place(relheight=1, relwidth=1)
 
+    option_menu_value = tk.StringVar(root)
+    option_menu_value.set("Select algorithm")
+
+    algorithms_list = [["Breadth first search", bfs]]
+
+    menu_options = [element[0] for element in algorithms_list]
+    algorithms_menu = tk.OptionMenu(frame, option_menu_value, *menu_options)
+    algorithms_menu.place(relwidth=0.15, relx=0.025, rely=0.075)
+
+    algorithms_button = tk.Button(root, text="Run!", command=lambda: button_click(option_menu_value, algorithms_list))
+    algorithms_button.place(relwidth=0.15, relx=0.025, rely=0.925)
+
     global graph_canvas
     graph_canvas = tk.Canvas(frame, bg="#ffffff", bd=1.5, relief="sunken")
     graph_canvas.bind("<Button-1>", click)
@@ -95,7 +126,7 @@ def setup():
     graph_canvas.bind("<B1-Motion>", mouse_motion)
     graph_canvas.bind("<B3-Motion>", lambda event: mouse_motion(event, 3))
     graph_canvas.bind("<ButtonRelease-1>", mouse_motion)
-    graph_canvas.place(relheight=0.75, relwidth=0.8, relx=0.1, rely=0.075)
+    graph_canvas.place(relheight=0.75, relwidth=0.7, relx=0.2, rely=0.075)
 
     root.protocol("WM_DELETE_WINDOW", lambda: exit_window(root))
     return root
@@ -124,6 +155,7 @@ if __name__ == "__main__":
     dragged_object_index = None  # For creating edges
     element_indexes = dict()  # Dictionary of IDs of elements on canvas and object instances of graph components
     graph = Graph()  # Main graph instance for visualization
+
 
     # Example of adding components to graph
     _test_dict = {

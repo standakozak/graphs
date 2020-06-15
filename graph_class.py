@@ -170,12 +170,25 @@ class Vertex:
         self.name = name
         self.graph = graph
         self.neighbors = []
+        self.edges = []
         self.x, self.y = x, y
+        """
+        States (of searching):
+            0 - not visited
+            1 - opened (searched the vertex but not its neighbors)
+            2 - closed (searched the vertex and its neighbors)
+        """
+        self.state = 0
+
+        self.canvas_index = None
+        self.focused = False
+        self.highlighted = False
+
         if self.x is None:
             self.x = randint(VERTEX_SIZE / 2, MAX_CANVAS_WIDTH - VERTEX_SIZE / 2)
         if self.y is None:
             self.y = randint(VERTEX_SIZE / 2, MAX_CANVAS_HEIGHT - VERTEX_SIZE / 2)
-        self.focused = False
+
 
     def __str__(self):
         neighbors_text = [str(neighbor.name) for neighbor in self.neighbors]
@@ -196,12 +209,19 @@ class Edge:
             weight - int; weight of edge
             graph - graph class instance
         """
+
         self.vertices = vertex_objects
         self.oriented = oriented
         self.weight = weight
         self.name = name
         self.graph = graph
+
         self.focused = False
+        self.highlighted = False
+        self.canvas_index = None
+        for vertex in self.vertices:
+            if self not in vertex.edges:
+                vertex.edges.append(self)
 
     def set_neighbors(self):
         """

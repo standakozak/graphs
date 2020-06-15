@@ -1,51 +1,6 @@
 from graph_class import Vertex, Edge
-from constants import VERTEX_SIZE
-
-
-def check_pos(canvas, elements, CURRENT):
-    """
-    Checks elements on CURRENT position
-
-    Returns ID of element on CURRENT position or None
-    Parameters:
-        canvas - tkinter.Canvas object
-        elements - dictionary of elements on canvas
-        CURRENT - tkinter.CURRENT
-    """
-    return_value = None
-    if CURRENT is not None:
-        index = canvas.find_withtag(CURRENT)
-        if len(index) > 0:
-            if index[0] in elements.keys():
-                return_value = index[0]
-    return return_value
-
-
-def check_pos_set_focus(canvas, elements, graph, CURRENT):
-    """
-    Create / delete focus of CURRENT element from elements
-
-     Returns None if CURRENT is None or if there is not any element on CURRENT position,
-        False if component got unfocused and index of element from dictionary if it got focus.
-
-    Parameters:
-        canvas - tkinter.Canvas object
-        elements - dictionary of elements on Canvas in form index : element object
-        graph - Graph object
-        CURRENT - tkinter.CURRENT (ID of element of canvas under the mouse)
-    """
-
-    element_index = check_pos(canvas, elements, CURRENT)
-    return_value = None
-    if element_index is not None:
-
-        element = elements[element_index]
-        if type(element) == Vertex or type(element) == Edge:
-            return_value = graph.set_focus(element)
-
-    if return_value is True:
-        return_value = element_index
-    return return_value
+from constants import VERTEX_SIZE, ALG_SPEED
+from time import sleep
 
 
 def update_canvas(canvas, elements, graph):
@@ -61,6 +16,7 @@ def update_canvas(canvas, elements, graph):
     """
     indexes_to_delete = []
     for index, component in elements.items():
+        component.highlighted = False
         if type(component) == Edge:
             if component not in graph.edges:
                 canvas.delete(index)
@@ -93,9 +49,11 @@ def draw_graph(graph, canvas, elements):
     for edge in graph.edges:
         element_index = draw_edge(canvas, edge)
         elements[element_index] = edge
+        edge.canvas_index = element_index
     for vertex in graph.vertices:
         element_index = draw_vertex(canvas, vertex)
         elements[element_index] = vertex
+        vertex.canvas_index = element_index
 
     return elements
 
@@ -112,7 +70,9 @@ def draw_vertex(canvas, vertex, index=None):
         index - int, ID of element on canvas (if already created)
 
     """
-    if vertex.focused:
+    if vertex.highlighted:
+        color = "blue"
+    elif vertex.focused:
         color = "#befc9a"
     else:
         color = "#ffffff"
@@ -144,18 +104,20 @@ def draw_edge(canvas, edge, index=None):
     """
     vertex1 = edge.vertices[0]
     vertex2 = edge.vertices[1]
-    if edge.focused:
-        _color = "green"
+    if edge.highlighted:
+        color = "blue"
+    elif edge.focused:
+        color = "green"
     else:
-        _color = "#000000"
+        color = "#000000"
     if index is None:
         line = canvas.create_line(vertex1.x, vertex1.y, vertex2.x, vertex2.y,
-                                  width=4, activewidth=8, fill=_color
+                                  width=4, activewidth=8, fill=color
                                   )
         return line
     else:
         canvas.coords(index, edge.vertices[0].x, edge.vertices[0].y, edge.vertices[1].x, edge.vertices[1].y)
-        canvas.itemconfig(index, fill=_color)
+        canvas.itemconfig(index, fill=color)
 
 
 def add_vertex_from_click(x, y, canvas, graph):
@@ -176,26 +138,7 @@ def add_vertex_from_click(x, y, canvas, graph):
     return index, vertex
 
 
-def move_focused(x, y, element_index, elements):
-    """
-    Changes vertex coordinates
-
-    Parameters:
-        x - new horizontal position of vertex on canvas
-        y - new vertical position of vertex on canvas
-        element_index - ID of element (vertex) on canvas
-        elements - dictionary of elements on canvas
-    """
-    if element_index is None or element_index not in elements.keys():
-        return None
-    element = elements[element_index]
-    if type(element) != Vertex:
-        return None
-    element.x = x
-    element.y = y
-
-
-def add_line(vertices, canvas, graph):
+def add_edge(vertices, canvas, graph):
     """
     Adds connection between vertices after dragging by left button on mouse
 
@@ -217,19 +160,20 @@ def add_line(vertices, canvas, graph):
         return None
 
 
-def remove_object(object_index, elements, graph, canvas):
+def draw_algorithm(func, canvas, graph, element):
     """
-    Removes component from Graph object and from canvas
+    Creates a seqence in which are objects highlighted and highlights them
 
-    Returns modified Graph object
-    Parameters:
-        object_index - ID of element on canvas to be removed
-        element - dictionary of all elements on canvas
-        graph - instance of Graph class
-        canvas - tkinter.Canvas object
+    TODO animations with after
+
     """
-    if object_index:
-        canvas.delete(object_index)
-        graph = graph - elements[object_index]
-
-    return graph
+    object_queue = func(graph, element)
+    while object_queue:
+        graph_object = object_queue.pop(0)
+        graph_object.highlighted = True
+        if isinstance(graph_object, Vertex):
+            draw_vertex(canvas, graph_object, graph_object.canvas_index)
+        elif isinstance(graph_object, Edge):
+            draw_edge(canvas, graph_object, graph_object.canvas_index)
+        canvas.update_idletasks()
+        sleep(ALG_SPEED)
