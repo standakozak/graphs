@@ -5,7 +5,7 @@ This is my project of visualization of
 At the moment, it can visualize graph created as Graph object.\
 You can also modify graph by adding vertices or edges on canvas.
 
-**How to use the program:**\
+**How to use the program:**
 * Start the program by running app.py
 * You can modify graph from code
 * Or you can change the graph on canvas:
