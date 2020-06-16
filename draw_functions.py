@@ -1,6 +1,5 @@
 from graph_class import Vertex, Edge
 from constants import VERTEX_SIZE, ALG_SPEED
-from time import sleep
 
 
 def update_canvas(canvas, elements, graph):
@@ -71,7 +70,7 @@ def draw_vertex(canvas, vertex, index=None):
 
     """
     if vertex.highlighted:
-        color = "blue"
+        color = "#b6b6d6"
     elif vertex.focused:
         color = "#befc9a"
     else:
@@ -105,7 +104,7 @@ def draw_edge(canvas, edge, index=None):
     vertex1 = edge.vertices[0]
     vertex2 = edge.vertices[1]
     if edge.highlighted:
-        color = "blue"
+        color = "#b6b6d6"
     elif edge.focused:
         color = "green"
     else:
@@ -160,20 +159,30 @@ def add_edge(vertices, canvas, graph):
         return None
 
 
+def animation_step(canvas, queue):
+    """
+    Parameters:
+        canvas - tkinter.canvas object
+        queue - list of Edges and Vertices in the order they are higlighted
+    """
+
+    if len(queue) > 0:
+        object_to_draw = queue.pop(0)
+        if isinstance(object_to_draw, Vertex):
+            draw_vertex(canvas, object_to_draw, object_to_draw.canvas_index)
+        elif isinstance(object_to_draw, Edge):
+            draw_edge(canvas, object_to_draw, object_to_draw.canvas_index)
+        canvas.after(int(ALG_SPEED * 1000), lambda: animation_step(canvas, queue))
+
+
 def draw_algorithm(func, canvas, graph, element):
     """
-    Creates a seqence in which are objects highlighted and highlights them
-
-    TODO animations with after
+    Creates a seqence in which are objects highlighted start animation
 
     """
     object_queue = func(graph, element)
-    while object_queue:
-        graph_object = object_queue.pop(0)
+    for graph_object in object_queue:
         graph_object.highlighted = True
-        if isinstance(graph_object, Vertex):
-            draw_vertex(canvas, graph_object, graph_object.canvas_index)
-        elif isinstance(graph_object, Edge):
-            draw_edge(canvas, graph_object, graph_object.canvas_index)
-        canvas.update_idletasks()
-        sleep(ALG_SPEED)
+
+    animation_step(canvas, object_queue)
+
