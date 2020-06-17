@@ -14,6 +14,6 @@ You can also modify graph by adding vertices or edges on canvas.
     - Move vertices with right mouse button
     
     ![screenshot](screenshots/screen.png)\
-    ![screenshot_2](screenshots/screen #2.png)\
+    ![screenshot_2](screenshots/screen#2.png)\
 (You can find Graph, Vertex and Edge classes in branch **graph_class**)
   
