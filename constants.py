@@ -5,4 +5,4 @@ VERTEX_SIZE = 30  # Width and height of ovals (vertices)
 MAX_CANVAS_WIDTH = 896
 MAX_CANVAS_HEIGHT = 493
 
-ALG_SPEED = 0.25
+ALG_SPEED = 500

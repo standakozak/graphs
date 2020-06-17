@@ -6,6 +6,7 @@ from graph_class import Graph
 from draw_functions import *
 from ui_functions import *
 from algorithms import bfs
+from constants import ALG_SPEED
 
 
 def click(event):
@@ -38,7 +39,7 @@ def button_click(value_variable, actions):
         global graph, focused_object_index, element_indexes, graph_canvas
         if focused_object_index:
             start_object = element_indexes[focused_object_index]
-            draw_algorithm(algorithm_func, graph_canvas, graph, start_object)
+            draw_algorithm(algorithm_func, graph_canvas, graph, start_object, ALG_SPEED)
 
 
 def mouse_motion(event, mouse_num=1):
@@ -95,6 +96,11 @@ def key_press(event):
         focused_object_index = None
 
 
+def slider_change(value):
+    global ALG_SPEED
+    ALG_SPEED = int(value)
+
+
 def setup():
     """
     Creates window and widgets, binds events to functions
@@ -115,8 +121,12 @@ def setup():
     algorithms_menu = tk.OptionMenu(frame, option_menu_value, *menu_options)
     algorithms_menu.place(relwidth=0.15, relx=0.025, rely=0.075)
 
+    speed_slider = tk.Scale(root, from_=100, to=1000, resolution=25, orient=tk.HORIZONTAL, command=slider_change)
+    speed_slider.set(ALG_SPEED)
+    speed_slider.place(relwidth=0.15, relx=0.025, rely=0.650)
+
     algorithms_button = tk.Button(root, text="Run!", command=lambda: button_click(option_menu_value, algorithms_list))
-    algorithms_button.place(relwidth=0.15, relx=0.025, rely=0.925)
+    algorithms_button.place(relwidth=0.15, relx=0.025, rely=0.750)
 
     global graph_canvas
     graph_canvas = tk.Canvas(frame, bg="#ffffff", bd=1.5, relief="sunken")

@@ -138,19 +138,32 @@ class Graph:
                     del new_graph.vertices[index]
                     break
 
-            indexes_to_delete = []
+            edges_to_delete = []
             for index, edge in enumerate(new_graph.edges):
                 if other in edge.vertices:
-                    indexes_to_delete.append(index)
-            for index in reversed(indexes_to_delete):
-                del new_graph.edges[index]
+                    edges_to_delete.append(edge)
+            for edge in edges_to_delete:
+                new_graph.delete_edge(edge)
 
         elif type(other) == Edge:
             for index, edge in enumerate(new_graph.edges):
                 if edge == other:
-                    del new_graph.edges[index]
+                    new_graph.delete_edge(edge)
                     break
         return new_graph
+
+    def delete_edge(self, edge):
+        vertex1, vertex2 = edge.vertices
+        if vertex1 in vertex2.neighbors:
+            vertex2.neighbors.remove(vertex1)
+        if vertex2 in vertex1.neighbors:
+            vertex1.neighbors.remove(vertex2)
+
+        if edge in vertex1.edges:
+            vertex1.edges.remove(edge)
+        if edge in vertex2.edges:
+            vertex2.edges.remove(edge)
+        self.edges.remove(edge)
 
 
 class Vertex:
@@ -188,7 +201,6 @@ class Vertex:
             self.x = randint(VERTEX_SIZE / 2, MAX_CANVAS_WIDTH - VERTEX_SIZE / 2)
         if self.y is None:
             self.y = randint(VERTEX_SIZE / 2, MAX_CANVAS_HEIGHT - VERTEX_SIZE / 2)
-
 
     def __str__(self):
         neighbors_text = [str(neighbor.name) for neighbor in self.neighbors]
@@ -231,8 +243,12 @@ class Edge:
         if not self.oriented:
             if vertex1 not in vertex2.neighbors:
                 vertex2.neighbors.append(vertex1)
+            if self not in vertex2.edges:
+                vertex2.edges.append(self)
         if vertex2 not in vertex1.neighbors:
             vertex1.neighbors.append(vertex2)
+        if self not in vertex1.edges:
+            vertex1.edges.append(self)
 
     def __str__(self):
         return f"Edge {self.name} connecting vertices {self.vertices[0].name} and {self.vertices[1].name} in graph " \

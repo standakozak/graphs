@@ -159,7 +159,7 @@ def add_edge(vertices, canvas, graph):
         return None
 
 
-def animation_step(canvas, queue):
+def animation_step(canvas, queue, speed):
     """
     Parameters:
         canvas - tkinter.canvas object
@@ -172,10 +172,10 @@ def animation_step(canvas, queue):
             draw_vertex(canvas, object_to_draw, object_to_draw.canvas_index)
         elif isinstance(object_to_draw, Edge):
             draw_edge(canvas, object_to_draw, object_to_draw.canvas_index)
-        canvas.after(int(ALG_SPEED * 1000), lambda: animation_step(canvas, queue))
+        canvas.after(speed, lambda: animation_step(canvas, queue, speed))
 
 
-def draw_algorithm(func, canvas, graph, element):
+def draw_algorithm(func, canvas, graph, element, speed):
     """
     Creates a seqence in which are objects highlighted start animation
 
@@ -184,5 +184,5 @@ def draw_algorithm(func, canvas, graph, element):
     for graph_object in object_queue:
         graph_object.highlighted = True
 
-    animation_step(canvas, object_queue)
+    animation_step(canvas, object_queue, speed)
 
