@@ -5,7 +5,7 @@ from sys import exit
 from graph_class import Graph
 from draw_functions import *
 from ui_functions import *
-from algorithms import bfs
+from algorithms import bfs, dfs_start
 from constants import ALG_SPEED
 
 
@@ -115,7 +115,10 @@ def setup():
     option_menu_value = tk.StringVar(root)
     option_menu_value.set("Select algorithm")
 
-    algorithms_list = [["Breadth first search", bfs]]
+    algorithms_list = [
+        ["Breadth-first search", bfs],
+        ["Depth-first search", dfs_start]
+    ]
 
     menu_options = [element[0] for element in algorithms_list]
     algorithms_menu = tk.OptionMenu(frame, option_menu_value, *menu_options)
