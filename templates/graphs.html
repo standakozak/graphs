@@ -1,0 +1,60 @@
+<!--
+    Head
+-->
+
+
+{% extends "base_template.html" %}
+{% block title %}Graphs{% endblock%}
+
+{% block css %}
+    #graphs_header {text-align: center}
+    #algorithms_container {margin-left: 15px; width: 20%; text-align: center; float: left}
+    #algorithm_speed {width: 100%}
+    #algorithm_select {width: 100%; text-align: center}
+
+
+    #canvas_container {width: 75%; float: right}
+    #graphs_canvas {border: 1px solid black; width: 75%}
+
+{%endblock%}
+
+<!--
+    Body
+-->
+
+{%block center%}
+
+<div id="graphs_header">
+    <h1>Graphs visualization</h1>
+    <p>Hello, these are my graphs!</p>
+</div>
+
+
+<div id="algorithms_container">
+
+    <p>Select algorithm:</p>
+    <select name="algorithm_select", id="algorithm_select">
+        <option>Breadth-first search</option>
+        <option>Depth-first search</option>
+    </select>
+    <p>Animation speed:</p>
+
+    <input type="range" id="algorithm_speed" name="algorithm_speed" min="100" max="1000" step="25"/><br/>
+    <button>Run!</button>
+</div>
+
+
+
+<div id="canvas_container">
+    <canvas id="graphs_canvas"></canvas>
+</div>
+{%endblock%}
+
+
+<!--
+    Scripts
+-->
+
+{% block activate_link %}
+    link_id = "graphs_link"
+{%endblock%}
